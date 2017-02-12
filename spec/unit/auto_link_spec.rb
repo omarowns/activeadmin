@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "auto linking resources" do
+RSpec.describe "auto linking resources", type: :view do
   include ActiveAdmin::ViewHelpers::ActiveAdminApplicationHelper
   include ActiveAdmin::ViewHelpers::AutoLinkHelper
   include ActiveAdmin::ViewHelpers::DisplayHelper
@@ -10,8 +10,8 @@ RSpec.describe "auto linking resources" do
   let(:active_admin_namespace){ ActiveAdmin::Namespace.new(ActiveAdmin::Application.new, :admin) }
   let(:post){ Post.create! title: "Hello World" }
 
-  def authorized?(*)
-    true
+  before do
+    allow(self).to receive(:authorized?).and_return(true)
   end
 
   context "when the resource is not registered" do
@@ -24,17 +24,18 @@ RSpec.describe "auto linking resources" do
     before do
       active_admin_namespace.register Post
     end
+
     it "should return a link with the display name of the object" do
-      url_path = "/admin/posts/#{post.id}?locale=en"
-      expect(self).to receive(:url_options).and_return(locale: 'en')
-      expect(self).to receive(:url_for) { |url| url }
-      expect(self).to receive(:link_to).with "Hello World", url_path
-      auto_link(post)
+      expect(auto_link(post)).to \
+          match(%r{<a href="/admin/posts/\d+">Hello World</a>})
     end
 
     context "but the user doesn't have access" do
+      before do
+        allow(self).to receive(:authorized?).and_return(false)
+      end
+
       it "should return the display name of the object" do
-        expect(self).to receive(:authorized?).twice.and_return(false)
         expect(auto_link(post)).to eq "Hello World"
       end
     end
@@ -45,11 +46,8 @@ RSpec.describe "auto linking resources" do
       end
 
       it "should fallback to edit" do
-        url_path = "/admin/posts/#{post.id}/edit?locale=en"
-        expect(self).to receive(:url_options).and_return(locale: 'en')
-        expect(self).to receive(:url_for) { |url| url }
-        expect(self).to receive(:link_to).with "Hello World", url_path
-        auto_link(post)
+        expect(auto_link(post)).to \
+          match(%r{<a href="/admin/posts/\d+/edit">Hello World</a>})
       end
     end
 
