@@ -5,6 +5,8 @@ RSpec.describe ActiveAdmin::ResourceController::Sidebars, type: :controller do
   render_views # https://github.com/rspec/rspec-rails/issues/860
 
   before do
+    load_defaults!
+
     @controller = klass.new
   end
 
