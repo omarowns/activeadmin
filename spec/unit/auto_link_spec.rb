@@ -14,6 +14,10 @@ RSpec.describe "auto linking resources", type: :view do
     allow(self).to receive(:authorized?).and_return(true)
   end
 
+  after do
+    active_admin_namespace.unload!
+  end
+
   context "when the resource is not registered" do
     it "should return the display name of the object" do
       expect(auto_link(post)).to eq "Hello World"
