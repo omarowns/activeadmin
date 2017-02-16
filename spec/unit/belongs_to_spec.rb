@@ -4,7 +4,7 @@ RSpec.describe ActiveAdmin::Resource::BelongsTo do
   let(:application){ ActiveAdmin::Application.new }
   let(:namespace) { ActiveAdmin::Namespace.new(application, :one) }
 
-  let(:user_config){ namespace.register User }
+  let!(:user_config) { namespace.register User }
   let(:post_config){ namespace.register Post do belongs_to :user end }
   let(:belongs_to){ post_config.belongs_to_config.first }
 
