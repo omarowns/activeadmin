@@ -201,8 +201,9 @@ module ActiveAdmin
         if resource.is_a?(Resource) && resource.dsl
           resource.dsl.run_registration_block { @config = nil }
         end
+
+        @resources.delete(resource)
       end
-      @resources = ResourceCollection.new
     end
 
     # Creates a ruby module to namespace all the classes in if required

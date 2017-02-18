@@ -19,6 +19,10 @@ module ActiveAdmin
       end
     end
 
+    def delete(resource)
+      @collection.reject! { |k| k == resource.resource_name }
+    end
+
     # Changes `each` to pass in the value, instead of both the key and value.
     def each(&block)
       values.each &block
